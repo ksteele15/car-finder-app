@@ -1,0 +1,28 @@
+# Backup scheduler. Craigslist often blocks GitHub's datacenter IPs, so a home
+# machine/Pi with cron is more reliable (see README). Set SMTP_* secrets to get email.
+name: daily-wrx-search
+on:
+  schedule:
+    - cron: "0 13 * * *"   # 13:00 UTC ~ 6-7am US Mountain
+  workflow_dispatch:
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt && playwright install --with-deps chromium
+      - uses: actions/cache@v4
+        with:
+          path: state
+          key: seen-${{ github.run_id }}
+          restore-keys: seen-
+      - run: python -m carfinder --email
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+      - uses: actions/upload-artifact@v4
+        with: { name: report, path: reports/ }

@@ -1,0 +1,29 @@
+# What you're hunting for. Leave a field out (or null) to not filter on it.
+search:
+  make: Subaru
+  model: WRX
+  year_min: 2015
+  year_max: 2021
+  colors: [blue, white]      # black blue brown green grey orange purple red silver white yellow
+  max_price: 30000
+  max_mileage: 80000
+  exclude_words: [wanted, parts, salvage, "parts only", "rebuilt"]
+  # false = keep listings whose year/mileage can't be read from the title (flagged "?")
+  strict: false
+
+sources:
+  craigslist:
+    enabled: true
+    sites: all               # "all" = every US site, or a list like [seattle, portland, denver]
+    delay_seconds: 2.0       # be polite; ~400 sites * 2s ~ 15 min
+  facebook:
+    enabled: true
+    # Marketplace is per-metro (no nationwide search). Add the cities you'd drive/ship from.
+    locations: [seattle, portland, sanfrancisco, losangeles, sandiego, phoenix, denver,
+                saltlakecity, dallas, houston, austin, chicago, minneapolis, detroit,
+                columbus, atlanta, miami, nyc, boston, philadelphia, washingtondc]
+    storage_state: fb_state.json   # optional logged-in session (see README)
+
+output:
+  dir: reports
+  state_file: state/seen.json
